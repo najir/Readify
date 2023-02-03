@@ -10,9 +10,9 @@ Goal of this project is to have a locally stored, visual list of books that i've
 
 QT is used as a front-end GUI and SQLLite as a backend database.  
 
-###Build:  
+### Build:  
 OS: Windows  
 IDE: VisualStudio  
 Dependencies:   
-SQLLite v3.40.1(Included as of 2.2.23)
-QT v6.5.0  
+SQLLite v3.40.1(Included as of 2.2.23)  
+QT v6.5.0    
