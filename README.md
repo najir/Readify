@@ -1,7 +1,18 @@
 # BookJournal
   Isaac Perks
-  07/21/22
-# Description:
-A basic c++ program that allows you to enter book information and save books in a database. You can in the future refer back to this list, view the books you've entered and mark down when they have been purchased. A GUI will be made to visualize the total list of books and individual entries as well. MySQL will be the database storing book information. Books will be searchable, and sortable, with the option to sort by non-purchased or purchased books as well.
+  02/02/23
+## Description:
+C++ based desktop application that allows a user to input and save books to a locally stored journal.
+Books Name/Description/Rating/Page#/Read_Status/Notes can all be added and modified. A list of all saved books are viewable
+on the main page with individual pages for each book to view and edit data.  
 
-In the future I intend to create a python based function to scrawl book websites and post JSON api data to be access by this c++ program. The intention is to allow a book name entry and have the data filled automatically.
+Goal of this project is to have a locally stored, visual list of books that i've read and intend to read.  
+
+QT is used as a front-end GUI and SQLLite as a backend database.  
+
+###Build:  
+OS: Windows  
+IDE: VisualStudio  
+Dependencies:   
+SQLLite v3.40.1(Included as of 2.2.23)
+QT v6.5.0  
