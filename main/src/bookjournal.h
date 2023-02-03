@@ -13,7 +13,7 @@ public:
 
 private:
     Ui::bookjournalClass ui;
-    void on_pushButtonEdit_clicked();
+    void on_listWidget_doubleClicked();
     void on_pushButtonNew_clicked();
     void on_pushButtonCancel_clicked();
     void on_pushButtonSave_clicked();
