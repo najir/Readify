@@ -8,11 +8,11 @@ on the main page with individual pages for each book to view and edit data.
 
 Goal of this project is to have a locally stored, visual list of books that i've read and intend to read.  
 
-QT is used as a front-end GUI and SQLLite as a backend database.  
+QT is used as a front-end GUI and SQLLite as a database.  
 
 ### Build:  
 OS: Windows  
 IDE: VisualStudio  
 Dependencies:   
 SQLLite v3.40.1(Included as of 2.2.23)  
-QT v6.5.0    
+QT v6.5.0 
