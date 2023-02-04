@@ -72,6 +72,12 @@ static int bookjournaldb::insert(const char dir) {
 	}
 	return 0;
 }
+static int bookjournaldb::get(const char dir, int ID, std::string bookName) {
+
+};
+static int bookjournaldb::getAll(const char dir) {
+
+};
 
 
 /******************************
@@ -87,5 +93,11 @@ void bookjournaldb::deleteBook() {
 
 }
 void bookjournaldb::editBook() {
+
+}
+void bookjournaldb::getBook(int ID, std::string bookName) {
+
+}
+void bookjournaldb::getAllBooks() {
 
 }
