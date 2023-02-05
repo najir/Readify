@@ -19,15 +19,30 @@ int main() {
 ******************************/
 static int bookjournaldb::createDB(const char dir) {
 	sqlite3* DB;
-	int exit = 0;
+	int status = 0;
 
-	exit = sqlite3_open(dir, &DB);
-	sqlite3_close(DB);
+	try {
+		status = sqlite3_open(dir, &DB);
+		if (status != SQLITE_OK) {
+			std::cerr << "Error Open DB" << endl;
+			sqlite3_free(messageError);
+		}
+		else {
+			std::cout << "DB Opened successfully" << endl;
+		}
+	}
+	catch (exception& e) {
+		std::cerr << e.what();
+	}
 
 	return 0;
 }
-static int bookjounaldb::createTable(const char dir) {
-	sqlite3* DB;
+static int bookjournaldb::finalizeDB(sqlite3* DB) {
+	sqlite3_close(DB);
+}
+static int bookjounaldb::createTable(sqlite3* DB) {
+	int status = 0;
+	char* messageError;
 	std::string sql = "CREATE TABLE IF NOT EXISTS BOOKS("
 		"ID INTEGER PRIMARY KEY AUTOINCREMENT, "
 		"NAME			TEXT NOT NULL, "
@@ -37,61 +52,93 @@ static int bookjounaldb::createTable(const char dir) {
 		"PAGES			INT NOT NULL);";
 
 	try {
-		int exit = 0;
-		exit = sqlite3(dir, &DB);
+		status = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
 
-		char* messageError;
-		exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
-
-		if (exit != SQLITE_OK) {
+		if (status != SQLITE_OK) {
 			std::cerr << "Error Create Table" << endl;
 			sqlite3_free(messageError);
 		}
 		else {
 			std::cout << "Table created successfully" << endl;
-			sqlite3_close(DB);
-		}
-		catch (const exception& e) {
-			std::cerr << e.what();
 		}
 	}
+	catch (const exception& e) {
+		std::cerr << e.what();
+	}
+	return 0;
 }
 static int bookjounraldb::callBack(void* notUsed, int colNumber, char** rowFields, char** colNames) {
 
 }
-static int bookjournaldb::insert(const char dir) {
-	sqlite3* DB;
+static int bookjournaldb::insert(sqlite3* DB) {
+	int status = 0;
 	char* messageError;
-
-	int exit = sqlite3_open(dir, &DB);
 	std::string sql("INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();");
-	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
-	if (exit != SQLITE_OK) {
-		std::cerr << "Error Insert" << endl;
-		sqlite3_free(messageError);
+
+	try {
+		status = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
+		if (status != SQLITE_OK) {
+			std::cerr << "Error Insert" << endl;
+			sqlite3_free(messageError);
+		}
+		else {
+			std::cout << "Records created successfully!" << endl;
+		}
 	}
-	else {
-		std::cout << "Records created successfully!" << endl;
+	catch (const exception& e) {
+		std::cerr << e.what();
 	}
 	return 0;
 }
-static int bookjournaldb::update(const char dir) {
+static int bookjournaldb::update(sqlite3* DB) {
+	int status = 0;
+	char* messageError;
+	std::string sql("");
 
+	try {
+
+	}
+	catch (const exception& e) {
+		std::cerr << e.what();
+	}
+	return 0;
 }
-static int bookjournaldb::get(const char dir, int ID, std::string bookName) {
-	if (bookName) {
+static int bookjournaldb::get(sqlite3* DB, int ID, std::string bookName) {
+	int status = 0;
+	char* messageError;
+	std::string sql("");
 
-	}
-	else if (ID) {
+	try {
+		if (bookName) {
 
+		}
+		else if (ID) {
+
+		}
 	}
+	catch (const exception& e) {
+		std::cerr << e.what();
+	}
+	return 0;
 };
-static int bookjournaldb::getAll(const char dir) {
-	sqlite3* DB;
-	int exit = sqlite3_open(dir, DB);
+static int bookjournaldb::getAll(sqlite3* DB) {
+	int status = 0;
+	char* messageError;
 	std::string sql = "SELECT * FROM BOOKS;";
 
-	sqlite3_exec(DB, sql.c_str(), bookjournaldb::callBack, NULL, NULL);
+	try {
+		status = sqlite3_exec(DB, sql.c_str(), bookjournaldb::callBack, NULL, &messageError);
+		if (status != SQLITE_OK) {
+			std::cerr << "Error Get" << endl;
+			sqlite3_free(messageError);
+		}
+		else {
+			std::cout << "Records retrieved successfully!" << endl;
+		}
+	}
+	catch (const exception& e) {
+		std::cerr << e.what();
+	}
 	return 0;
 };
 
