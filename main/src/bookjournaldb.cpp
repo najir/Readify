@@ -56,12 +56,15 @@ static int bookjounaldb::createTable(const char dir) {
 		}
 	}
 }
+static int bookjounraldb::callBack(void* notUsed, int colNumber, char** rowFields, char** colNames) {
+
+}
 static int bookjournaldb::insert(const char dir) {
 	sqlite3* DB;
 	char* messageError;
 
 	int exit = sqlite3_open(dir, &DB);
-	std::string sql("INSERT INTO GRADES(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();");
+	std::string sql("INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();");
 	exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
 	if (exit != SQLITE_OK) {
 		std::cerr << "Error Insert" << endl;
@@ -72,11 +75,24 @@ static int bookjournaldb::insert(const char dir) {
 	}
 	return 0;
 }
-static int bookjournaldb::get(const char dir, int ID, std::string bookName) {
+static int bookjournaldb::update(const char dir) {
 
+}
+static int bookjournaldb::get(const char dir, int ID, std::string bookName) {
+	if (bookName) {
+
+	}
+	else if (ID) {
+
+	}
 };
 static int bookjournaldb::getAll(const char dir) {
+	sqlite3* DB;
+	int exit = sqlite3_open(dir, DB);
+	std::string sql = "SELECT * FROM BOOKS;";
 
+	sqlite3_exec(DB, sql.c_str(), bookjournaldb::callBack, NULL, NULL);
+	return 0;
 };
 
 
@@ -92,12 +108,15 @@ void bookjournaldb::insertBook() {
 void bookjournaldb::deleteBook() {
 
 }
-void bookjournaldb::editBook() {
+void bookjournaldb::updateBook() {
 
 }
 void bookjournaldb::getBook(int ID, std::string bookName) {
 
 }
 void bookjournaldb::getAllBooks() {
+
+}
+void bookjournaldb::finalizeDB() {
 
 }
