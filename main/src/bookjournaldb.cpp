@@ -93,10 +93,17 @@ static int bookjournaldb::insert(sqlite3* DB) {
 static int bookjournaldb::update(sqlite3* DB) {
 	int status = 0;
 	char* messageError;
-	std::string sql("");
+	std::string sql("UPDATE BOOKS SET BOOK - ???");
 
 	try {
-
+		status = sqlite3_exec(DB, sql.c_str(), callBack, NULL, &messageError);
+		if (status != SQLITE_OK) {
+			std::cerr << "Error Update" << endl;
+			sqlite3_free(messageError);
+		}
+		else {
+			cout << "Record updated successfully!" << endl;
+		}
 	}
 	catch (const exception& e) {
 		std::cerr << e.what();
