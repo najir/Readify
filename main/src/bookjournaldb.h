@@ -10,16 +10,17 @@ static int finalizeDB();
 static int createTable(const char dir);
 static int callBack(void* notUsed, int colNumber, char** rowFields, char** colNames);
 static int insert(const char dir);
-static int update(const char dir);
+static int update(const char dir, int ID, std::string bookName);
 static int get(const char dir, int ID, std::string bookName);
 static int getAll(const char dir);
+static int deleteBook(const char dir, int ID, std::string bookName);
 
 
 //Helper Functions for GUI
 void initiateDB();
 void finalizeDB();
 void insertBook();
-void deleteBook();
-void updateBook();
+void deleteBook(int ID, std::string bookName);
+void updateBook(int ID, std::string bookName);
 void getBook(int ID, std::string bookName);
 void getAllBooks();

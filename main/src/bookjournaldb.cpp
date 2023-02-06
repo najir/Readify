@@ -148,6 +148,25 @@ static int bookjournaldb::getAll(sqlite3* DB) {
 	}
 	return 0;
 };
+static int bookjournaldb::deleteBook(const char dir, int ID, std::string bookName) {
+	int status = 0;
+	char* messageError;
+	std::string sql = "";
+
+	try {
+		if (bookName) {
+			std::string sql = "";
+		}
+		else if (ID) {
+			std::string sql = "";
+			status = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messageError)
+		}
+	}
+	catch (const exception& e) {
+		std::cerr << e.what();
+	}
+	return 0;
+}
 
 
 /******************************
@@ -159,10 +178,10 @@ void bookjournaldb::initiateDB() {
 void bookjournaldb::insertBook() {
 
 }
-void bookjournaldb::deleteBook() {
+void bookjournaldb::deleteBook(int ID, std::string bookName) {
 
 }
-void bookjournaldb::updateBook() {
+void bookjournaldb::updateBook(int ID, std::string bookName) {
 
 }
 void bookjournaldb::getBook(int ID, std::string bookName) {
