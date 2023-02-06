@@ -6,7 +6,7 @@
 ************************************************************/
 #include "bookjournaldb.h"
 
-const char DIR = "../rsc/";
+const char DIR = "../rsc/bookDB.db";
 
 int main() {
 
@@ -17,12 +17,11 @@ int main() {
 /******************************
 *  Internal DB Calls
 ******************************/
-static int bookjournaldb::createDB(const char dir) {
-	sqlite3* DB;
+static int bookjournaldb::createDB(sqlite3* DB) {
 	int status = 0;
 
 	try {
-		status = sqlite3_open(dir, &DB);
+		status = sqlite3_open(DIR, DB);
 		if (status != SQLITE_OK) {
 			std::cerr << "Error Open DB" << endl;
 			sqlite3_free(messageError);
@@ -67,13 +66,13 @@ static int bookjounaldb::createTable(sqlite3* DB) {
 	}
 	return 0;
 }
-static int bookjounraldb::callBack(void* notUsed, int colNumber, char** rowFields, char** colNames) {
+static int bookjounraldb::callBack(void* dbData, int colNumber, char** rowFields, char** colNames) {
 
 }
-static int bookjournaldb::insert(sqlite3* DB) {
+static int bookjournaldb::insert(sqlite3* DB, std::string insertValues) {
 	int status = 0;
 	char* messageError;
-	std::string sql("INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();");
+	std::string sql = insertValues;
 
 	try {
 		status = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
@@ -110,7 +109,7 @@ static int bookjournaldb::update(sqlite3* DB) {
 	}
 	return 0;
 }
-static int bookjournaldb::get(sqlite3* DB, int ID, std::string bookName) {
+static int bookjournaldb::get(sqlite3* DB, void* dbData, int ID, std::string bookName) {
 	int status = 0;
 	char* messageError;
 	std::string sql("");
@@ -128,7 +127,7 @@ static int bookjournaldb::get(sqlite3* DB, int ID, std::string bookName) {
 	}
 	return 0;
 };
-static int bookjournaldb::getAll(sqlite3* DB) {
+static int bookjournaldb::getAll(sqlite3* DB, void* dbData) {
 	int status = 0;
 	char* messageError;
 	std::string sql = "SELECT * FROM BOOKS;";
@@ -148,7 +147,7 @@ static int bookjournaldb::getAll(sqlite3* DB) {
 	}
 	return 0;
 };
-static int bookjournaldb::deleteBook(const char dir, int ID, std::string bookName) {
+static int bookjournaldb::deleteBookDB(sqlite3* DB, int ID, std::string bookName) {
 	int status = 0;
 	char* messageError;
 	std::string sql = "";
@@ -172,24 +171,38 @@ static int bookjournaldb::deleteBook(const char dir, int ID, std::string bookNam
 /******************************
 * Helper Functions
 ******************************/
-void bookjournaldb::initiateDB() {
+sqlite3* bookjournaldb::initiateDB() {
+	sqlite3* DB;
+	createDB(&DB);
+	
+	return DB;
+}
+void bookjournaldb::insertBook(sqlite3* DB, std::string bookName, std::string author, std::string bookNotes, bool readValue, int pageNumber) {
+	std::string inserValues = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();";
+
+	insert(DB, inserValues);
 
 }
-void bookjournaldb::insertBook() {
+void bookjournaldb::deleteBook(sqlite3* DB, int ID, std::string bookName) {
 
 }
-void bookjournaldb::deleteBook(int ID, std::string bookName) {
+void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName) {
 
 }
-void bookjournaldb::updateBook(int ID, std::string bookName) {
+std::string bookjournaldb::getBook(sqlite3* DB, int ID, std::string bookName) {
+	std::string bookReturn = "";
+	std::string dbData[1];
 
+	get(DB, dbData, ID, bookName);
+	bookReturn = dbData[0];
+	return bookReturn;
 }
-void bookjournaldb::getBook(int ID, std::string bookName) {
+std::string bookjournaldb::getAllBooks(sqlite3* DB) {
+	std::string* dbData[];
 
+	getAll(DB, dbData);
+	return dbData;
 }
-void bookjournaldb::getAllBooks() {
-
-}
-void bookjournaldb::finalizeDB() {
+void bookjournaldb::finalizeDB(sqlite3* DB) {
 
 }
