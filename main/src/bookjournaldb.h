@@ -14,6 +14,7 @@ static int update(sqlite3* DB, int ID, std::string bookName);
 static int get(sqlite3* DB, void* dbData, int ID, std::string bookName);
 static int getAll(sqlite3* DB, void* dbData);
 static int deleteBookDB(sqlite3* DB, int ID, std::string bookName);
+static int dbQuery(sqlite3* db, std::string query);
 
 
 //Helper Functions for GUI

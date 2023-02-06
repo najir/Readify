@@ -166,10 +166,31 @@ static int bookjournaldb::deleteBookDB(sqlite3* DB, int ID, std::string bookName
 	}
 	return 0;
 }
+static int bookjournaldb::dbQuery(sqlite3* db, std::string query) {
+	int status = 0;
+	char* messageError;
 
+	try {
+		status = sqlite3_exec(DB, query.c_str(), callBack , 0, &messageError);
+		if (status != SQLITE_OK) {
+			std::cerr << "Query Error" << endl;
+			sqlite3_free(messageError);
+		}
+		else {
+			std::cout << "Query Successfully passed!" << endl;
+		}
+	}
+	catch (const exception& e) {
+		std::cerr << e.what();
+	}
+	return 0;
+
+}
 
 /******************************
 * Helper Functions
+* 
+* Abstraction Layer that processes query info and manages returned data if needed.
 ******************************/
 sqlite3* bookjournaldb::initiateDB() {
 	sqlite3* DB;
@@ -177,32 +198,36 @@ sqlite3* bookjournaldb::initiateDB() {
 	
 	return DB;
 }
-void bookjournaldb::insertBook(sqlite3* DB, std::string bookName, std::string author, std::string bookNotes, bool readValue, int pageNumber) {
-	std::string inserValues = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();";
+void bookjournaldb::finalizeDB(sqlite3* DB) {
 
-	insert(DB, inserValues);
+}
+void bookjournaldb::insertBook(sqlite3* DB, std::string bookName, std::string author, std::string bookNotes, bool readValue, int pageNumber) {
+	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();";
+
+	dbQuery(DB, insertQuery);
 
 }
 void bookjournaldb::deleteBook(sqlite3* DB, int ID, std::string bookName) {
+	std::string deleteQuery = "";
 
+	dbQuery(DB, deleteQuery);
 }
 void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName) {
+	std::string updateQuery = "";
+
+	dbQuery(DB, updateQuery);
 
 }
 std::string bookjournaldb::getBook(sqlite3* DB, int ID, std::string bookName) {
-	std::string bookReturn = "";
-	std::string dbData[1];
+	std::string getQuery = "";
+	
+	dbQuery(DB, getQuery);
 
-	get(DB, dbData, ID, bookName);
-	bookReturn = dbData[0];
-	return bookReturn;
+
 }
 std::string bookjournaldb::getAllBooks(sqlite3* DB) {
-	std::string* dbData[];
+	std::string getAllQuery = "";
+	dbQuery(DB, getAllQuery);
 
-	getAll(DB, dbData);
-	return dbData;
-}
-void bookjournaldb::finalizeDB(sqlite3* DB) {
 
 }
