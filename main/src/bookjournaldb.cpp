@@ -118,16 +118,9 @@ void bookjournaldb::insertBook(sqlite3* DB, std::string bookName, std::string au
 
 }
 void bookjournaldb::deleteBook(sqlite3* DB, int ID, std::string bookName) {
-	if (ID) {
-
-	}
-	else if (bookName) {
-
-	}
-	else {
-
-	}
-	std::string deleteQuery = "";
+	std::string deleteQuery = "DELETE FROM BOOKS WHERE ";
+	if (ID) { deleteQuery += "ID = " + ID; }
+	else if (bookName) { deleteQuery += "NAME = bookName" + ID; }
 
 	dbQuery(DB, deleteQuery);
 }
@@ -150,24 +143,17 @@ void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName, std::s
 
 }
 std::string bookjournaldb::getBook(sqlite3* DB, int ID, std::string bookName) {
-	if (ID) {
-
-	}
-	else if (bookName) {
-
-	}
-	else {
-
-	}
-	std::string getQuery = "";
+	std::string getQuery = "SELECT * FROM BOOKS WHERE ";
+	if (ID) { getQuery += "ID = " + ID; }
+	else if (bookName) { getQuery += "NAME = " + bookName; }
 	
 	dbQuery(DB, getQuery);
 
 
 }
 std::string bookjournaldb::getAllBooks(sqlite3* DB) {
-	std::string getAllQuery = "";
+	std::string getAllQuery = "SELECT * FROM BOOKS";
+
 	dbQuery(DB, getAllQuery);
 
-	
 }
