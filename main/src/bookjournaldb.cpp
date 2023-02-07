@@ -36,7 +36,7 @@ static int bookjournaldb::createDB(sqlite3* DB) {
 
 	return 0;
 }
-static int bookjournaldb::finalizeDB(sqlite3* DB) {
+static int bookjournaldb::deleteDB(sqlite3* DB) {
 	sqlite3_close(DB);
 }
 static int bookjounaldb::createTable(sqlite3* DB) {
@@ -48,6 +48,7 @@ static int bookjounaldb::createTable(sqlite3* DB) {
 		"AUTHOR			TEXT NOT NULL, "
 		"DESCRIPTION	TEXT, "
 		"NOTES			TEXT, "
+		"READ?			BOOL, "	
 		"PAGES			INT NOT NULL);";
 
 	try {
@@ -68,103 +69,6 @@ static int bookjounaldb::createTable(sqlite3* DB) {
 }
 static int bookjounraldb::callBack(void* dbData, int colNumber, char** rowFields, char** colNames) {
 
-}
-static int bookjournaldb::insert(sqlite3* DB, std::string insertValues) {
-	int status = 0;
-	char* messageError;
-	std::string sql = insertValues;
-
-	try {
-		status = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
-		if (status != SQLITE_OK) {
-			std::cerr << "Error Insert" << endl;
-			sqlite3_free(messageError);
-		}
-		else {
-			std::cout << "Records created successfully!" << endl;
-		}
-	}
-	catch (const exception& e) {
-		std::cerr << e.what();
-	}
-	return 0;
-}
-static int bookjournaldb::update(sqlite3* DB) {
-	int status = 0;
-	char* messageError;
-	std::string sql("UPDATE BOOKS SET BOOK - ???");
-
-	try {
-		status = sqlite3_exec(DB, sql.c_str(), callBack, NULL, &messageError);
-		if (status != SQLITE_OK) {
-			std::cerr << "Error Update" << endl;
-			sqlite3_free(messageError);
-		}
-		else {
-			cout << "Record updated successfully!" << endl;
-		}
-	}
-	catch (const exception& e) {
-		std::cerr << e.what();
-	}
-	return 0;
-}
-static int bookjournaldb::get(sqlite3* DB, void* dbData, int ID, std::string bookName) {
-	int status = 0;
-	char* messageError;
-	std::string sql("");
-
-	try {
-		if (bookName) {
-
-		}
-		else if (ID) {
-
-		}
-	}
-	catch (const exception& e) {
-		std::cerr << e.what();
-	}
-	return 0;
-};
-static int bookjournaldb::getAll(sqlite3* DB, void* dbData) {
-	int status = 0;
-	char* messageError;
-	std::string sql = "SELECT * FROM BOOKS;";
-
-	try {
-		status = sqlite3_exec(DB, sql.c_str(), bookjournaldb::callBack, NULL, &messageError);
-		if (status != SQLITE_OK) {
-			std::cerr << "Error Get" << endl;
-			sqlite3_free(messageError);
-		}
-		else {
-			std::cout << "Records retrieved successfully!" << endl;
-		}
-	}
-	catch (const exception& e) {
-		std::cerr << e.what();
-	}
-	return 0;
-};
-static int bookjournaldb::deleteBookDB(sqlite3* DB, int ID, std::string bookName) {
-	int status = 0;
-	char* messageError;
-	std::string sql = "";
-
-	try {
-		if (bookName) {
-			std::string sql = "";
-		}
-		else if (ID) {
-			std::string sql = "";
-			status = sqlite3_exec(DB, sql.c_str(), NULL, NULL, &messageError)
-		}
-	}
-	catch (const exception& e) {
-		std::cerr << e.what();
-	}
-	return 0;
 }
 static int bookjournaldb::dbQuery(sqlite3* db, std::string query) {
 	int status = 0;
@@ -195,30 +99,66 @@ static int bookjournaldb::dbQuery(sqlite3* db, std::string query) {
 sqlite3* bookjournaldb::initiateDB() {
 	sqlite3* DB;
 	createDB(&DB);
+	createTable(&DB);
 	
 	return DB;
 }
 void bookjournaldb::finalizeDB(sqlite3* DB) {
-
+	deleteDB(DB)
 }
 void bookjournaldb::insertBook(sqlite3* DB, std::string bookName, std::string author, std::string bookNotes, bool readValue, int pageNumber) {
-	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, PAGES) VALUES();";
+	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) VALUES(";		
+	insertQuery += bookName + ', ';
+	insertQuery += author + ', ';
+	insertQuery += bookNotes + ', ';
+	insertQuery += readValue + ', ';
+	insertQuery += pageNumber + ');';
 
 	dbQuery(DB, insertQuery);
 
 }
 void bookjournaldb::deleteBook(sqlite3* DB, int ID, std::string bookName) {
+	if (ID) {
+
+	}
+	else if (bookName) {
+
+	}
+	else {
+
+	}
 	std::string deleteQuery = "";
 
 	dbQuery(DB, deleteQuery);
 }
-void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName) {
-	std::string updateQuery = "";
+void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName, std::string author, std::string bookNotes, bool readValue, int pageNumber) {
+	int idValue = 0;
+	std::string updateSearch = "";
+
+	//Need to get id of bookname location then use that value for WHERE
+	dbQuery(DB, updateSearch);
+
+	std::string updateQuery = "UPDATE BOOKS SET NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) WHERE(";
+	updateQuery += 'NAME = ' + bookName;
+	updateQuery += 'AUTHOR = ' + author;
+	updateQuery += 'NOTES = ' + bookNotes;
+	updateQuery += 'READ? = ' + readValue;
+	updateQuery += 'PAGES = ' + pageNumber;
+	updateQuery += " WHERE ID = " + idValue;
 
 	dbQuery(DB, updateQuery);
 
 }
 std::string bookjournaldb::getBook(sqlite3* DB, int ID, std::string bookName) {
+	if (ID) {
+
+	}
+	else if (bookName) {
+
+	}
+	else {
+
+	}
 	std::string getQuery = "";
 	
 	dbQuery(DB, getQuery);
@@ -229,5 +169,5 @@ std::string bookjournaldb::getAllBooks(sqlite3* DB) {
 	std::string getAllQuery = "";
 	dbQuery(DB, getAllQuery);
 
-
+	
 }

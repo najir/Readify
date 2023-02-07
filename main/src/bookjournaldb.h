@@ -6,7 +6,7 @@
 
 //DataBase interaction Functions
 static int createDB(sqlite3* DB);
-static int finalizeDB();
+static int deleteDB();
 static int createTable(sqlite3* DB);
 static int callBack(void* notUsed, int colNumber, char** rowFields, char** colNames);
 static int insert(sqlite3* DB, std::string insertValues);
