@@ -7,6 +7,15 @@
 #include "bookjournaldb.h"
 
 const char DIR = "../rsc/bookDB.db";
+struct dbStruct {
+	int ID;
+	std::string NAME;
+	std::string AUTHOR;
+	std::string DESCRIPTION;
+	std::string NOTES;
+	bool READ;
+	int PAGES;
+};
 
 int main() {
 
@@ -67,15 +76,34 @@ static int bookjounaldb::createTable(sqlite3* DB) {
 	}
 	return 0;
 }
-static int bookjounraldb::callBack(void* dbData, int colNumber, char** rowFields, char** colNames) {
+static int bookjounraldb::callBack(void* dbData, int colNumber, char** colFields, char** colNames, std::vector<dbStruct>* dbVector) {
+	int i;
+	dbStruct* returnData = (dbStruct*)dbData;
+	if (colNumber > 1) {							// If getAll is called
+	
+	}
+	for (i = 0; i < colNumber; i++) {
+		if (strcmp(colNames[i], 'PAGES') == 0) {
+			returnData->PAGES = atoi(colFields[i])
+		}
+		else if (strcmp(colNames[i], 'ID') == 0) {
+			returnData->ID = atoi(colFields[i])
+		}
+		else if (stcmp(colNames[i], 'READ?') == 0) {
+			returnData->READ = atoi(colFields[i])
+		}
+	}
+	if(dbVector){
+		dbVector.push_back(returnData);
+	}
 
 }
-static int bookjournaldb::dbQuery(sqlite3* db, std::string query) {
+static int bookjournaldb::dbQuery(sqlite3* db, std::string query, void* dbStruct, std::vector<dbStruct>* dbVector) {
 	int status = 0;
 	char* messageError;
 
 	try {
-		status = sqlite3_exec(DB, query.c_str(), callBack , 0, &messageError);
+		status = sqlite3_exec(DB, query.c_str(), callBack , &dbStruct, &messageError, &std::vector<dbStruct> dbVector);
 		if (status != SQLITE_OK) {
 			std::cerr << "Query Error" << endl;
 			sqlite3_free(messageError);
@@ -131,7 +159,7 @@ void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName, std::s
 	//Need to get id of bookname location then use that value for WHERE
 	dbQuery(DB, updateSearch);
 
-	std::string updateQuery = "UPDATE BOOKS SET NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) WHERE(";
+	std::string updateQuery = "UPDATE BOOKS SET(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) WHERE(";
 	updateQuery += 'NAME = ' + bookName;
 	updateQuery += 'AUTHOR = ' + author;
 	updateQuery += 'NOTES = ' + bookNotes;
@@ -142,18 +170,21 @@ void bookjournaldb::updateBook(sqlite3* DB, int ID, std::string bookName, std::s
 	dbQuery(DB, updateQuery);
 
 }
-std::string bookjournaldb::getBook(sqlite3* DB, int ID, std::string bookName) {
+std::vector<dbStruct> bookjournaldb::getBook(sqlite3* DB, int ID, std::string bookName) {
+	dbStruct returnData;
 	std::string getQuery = "SELECT * FROM BOOKS WHERE ";
 	if (ID) { getQuery += "ID = " + ID; }
 	else if (bookName) { getQuery += "NAME = " + bookName; }
 	
-	dbQuery(DB, getQuery);
+	dbQuery(DB, getQuery, &returnData);
 
 
 }
-std::string bookjournaldb::getAllBooks(sqlite3* DB) {
+std::vector<dbStruct> bookjournaldb::getAllBooks(sqlite3* DB) {
+	dbStruct returnData;
+	std::vector<dbStruct> dbVector;
 	std::string getAllQuery = "SELECT * FROM BOOKS";
 
-	dbQuery(DB, getAllQuery);
+	dbQuery(DB, getAllQuery, &returnData, &dbVector);
 
 }
