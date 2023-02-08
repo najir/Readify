@@ -28,7 +28,8 @@ void bookjournal::on_listWidget_doubleClicked() {
 }
 void bookjournal::on_pushButtonNew_clicked() {
     //Hide main menu, show new menu
-
+    ui.verticalLayoutWidget->hide();
+    ui.verticalLayoutWidget_2->show();
 }
 
 /******************************
@@ -36,9 +37,11 @@ void bookjournal::on_pushButtonNew_clicked() {
 ******************************/
 void bookjournal::on_pushButtonCancel_clicked() {
     //Hide new menu, show main menu
-
+    ui.verticalLayoutWidget->show();
+    ui.verticalLayoutWidget_2->hide();
 }
 void bookjournal::on_pushButtonSave_clicked() {
     //push db call, hide new menu, show main menu + update list
-
+    ui.verticalLayoutWidget->show();
+    ui.verticalLayoutWidget_2->hide();
 }
