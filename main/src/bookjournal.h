@@ -10,6 +10,7 @@ class bookjournal : public QMainWindow
 public:
     bookjournal(QWidget* parent = nullptr);
     ~bookjournal();
+    void setDefaults();
 
 private:
     Ui::bookjournalClass ui;
