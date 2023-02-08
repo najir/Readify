@@ -144,22 +144,22 @@ void deleteBook(sqlite3* DB, int ID, std::string bookName) {
 
 	dbQuery(DB, deleteQuery);
 }
-void updateBook(sqlite3* DB, dbStruct data) {
+void updateBook(sqlite3* DB, dbStruct data, std::string tempName) {
 	int idValue = 0;
 	std::string updateSearch = "";
 
 	//Need to get id of bookname location then use that value for WHERE
-	dbQuery(DB, updateSearch);
+	dbQuery(DB, updateSearch, NULL, NULL);
 
 	std::string updateQuery = "UPDATE BOOKS SET(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) WHERE(";
-	updateQuery += 'NAME = ' + data.NAME;
-	updateQuery += 'AUTHOR = ' + data.AUTHOR;
-	updateQuery += 'NOTES = ' + data.NOTES;
-	updateQuery += 'READ? = ' + data.READ;
-	updateQuery += 'PAGES = ' + data.PAGES;
-	updateQuery += " WHERE ID = " + idValue;
+	updateQuery += "NAME = " + data.NAME;
+	updateQuery += "AUTHOR = " + data.AUTHOR;
+	updateQuery += "NOTES = " + data.NOTES;
+	updateQuery += "READ? = " + data.READ;
+	updateQuery += "PAGES = " + data.PAGES;
+	updateQuery += ") WHERE ID = " + idValue;
 
-	dbQuery(DB, updateQuery);
+	dbQuery(DB, updateQuery, NULL, NULL);
 
 }
 std::vector<dbStruct> getBook(sqlite3* DB, int ID, std::string bookName) {
