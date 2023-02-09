@@ -16,3 +16,6 @@ IDE: VisualStudio
 Dependencies:   
 SQLLite v3.40.1(Included as of 2.2.23)  
 QT v6.5.0 
+
+### Attributes:
+FreePik (Icon Art)

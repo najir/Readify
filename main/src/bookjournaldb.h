@@ -28,5 +28,5 @@ void finalizeDB(sqlite3* DB);
 void insertBook(sqlite3* DB, dbStruct data);
 void deleteBook(sqlite3* DB, int ID, std::string bookName);
 void updateBook(sqlite3* DB, dbStruct data, std::string tempName);
-void getBook(sqlite3* DB, int ID, std::string bookName);
-void getAllBooks(sqlite3* DB);
+dbStruct getBook(sqlite3* DB, int ID, std::string bookName);
+std::vector<dbStruct> getAllBooks(sqlite3* DB);

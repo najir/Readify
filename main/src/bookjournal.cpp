@@ -33,6 +33,21 @@ void bookjournal::setDefaults() {
     ui.textEditNotes->setText("");
     ui.spinBoxRead->setValue(0);
 }
+void bookjournal::updateList() {
+    // This function is used to create/update the list of widgets holding book data
+    std::vector<dbStruct> listStructs = getAllBooks(DB);
+    dbStruct tempStruct;
+    int i = 0;
+    QString listText = "";
+    for (i; i < listStructs.size(); i++) {
+        tempStruct = listStructs[i];
+        listText = tempStruct.NAME.c_str();
+        listText += "    |    " + tempStruct.AUTHOR;
+        listText += "    |    " + tempStruct.PAGES;
+        listText += " Pages";
+        QListWidgetItem()   
+    }
+}
 
 
 /******************************
@@ -41,12 +56,12 @@ void bookjournal::setDefaults() {
 void bookjournal::on_listWidget_doubleClicked() {
     std::vector<dbStruct> bookData;
     dbStruct bookDataEntry = bookData[0];
-    tempName = bookDataEntry.NAME
+    tempName = bookDataEntry.NAME;
 
-    ui.lineEditName->setText(bookDataEntry.NAME);
-    ui.lineEditAuthor->setText(bookDataEntry.AUTHOR);
-    ui.textEditDesc->setText(bookDataEntry.DESCRIPTION);
-    ui.textEditNotes->setText(bookDataEntry.NOTES);
+    ui.lineEditName->setText(QString(bookDataEntry.NAME.c_str()));
+    ui.lineEditAuthor->setText(QString(bookDataEntry.AUTHOR.c_str()));
+    ui.textEditDesc->setText(QString(bookDataEntry.DESCRIPTION.c_str()));
+    ui.textEditNotes->setText(QString(bookDataEntry.NOTES.c_str()));
     ui.checkBox->setChecked(bookDataEntry.READ);
     ui.spinBoxRead->setValue(bookDataEntry.PAGES);
     ui.widgetMain->hide();
@@ -79,6 +94,7 @@ void bookjournal::on_pushButtonSave_clicked() {
     saveValues.PAGES = ui.spinBoxRead->value();
     
     insertBook(DB, saveValues);
+    updateList();
     ui.widgetMain->show();
     ui.widgetPage->hide();
     setDefaults();
@@ -94,6 +110,7 @@ void bookjournal::on_pushButtonUpdate_clicked() {
     saveValues.PAGES = ui.spinBoxRead->value();
 
     updateBook(DB, saveValues, tempName);
+    updateList();
     ui.widgetMain->show();
     ui.widgetPage->hide();
     setDefaults();
@@ -101,6 +118,7 @@ void bookjournal::on_pushButtonUpdate_clicked() {
 void bookjournal::on_pushButtonDelete_clicked() {
     //push db call, hide new menu, show main menu + update list
     deleteBook(DB, NULL, ui.lineEditName->text().toStdString());
+    updateList();
 
     ui.widgetMain->show();
     ui.widgetPage->hide();

@@ -162,14 +162,14 @@ void updateBook(sqlite3* DB, dbStruct data, std::string tempName) {
 	dbQuery(DB, updateQuery, NULL, NULL);
 
 }
-std::vector<dbStruct> getBook(sqlite3* DB, int ID, std::string bookName) {
+dbStruct getBook(sqlite3* DB, int ID, std::string bookName) {
 	dbStruct returnData;
 	std::string getQuery = "SELECT * FROM BOOKS WHERE ";
 	if (ID) { getQuery += "ID = " + ID; }
-	else if (bookName) { getQuery += "NAME = " + bookName; }
-	
-	dbQuery(DB, getQuery, &returnData);
+	else if (!bookName.empty()) { getQuery += "NAME = " + bookName; }
 
+	dbQuery(DB, getQuery, &returnData, NULL);
+	return returnData;
 
 }
 std::vector<dbStruct> getAllBooks(sqlite3* DB) {

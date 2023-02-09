@@ -10,7 +10,6 @@ class bookjournal : public QMainWindow
 public:
     bookjournal(QWidget* parent = nullptr);
     ~bookjournal();
-    void setDefaults();
 
 private:
     std::string tempName;               // Saves old book name for updating changes on db
@@ -21,4 +20,6 @@ private:
     void on_pushButtonSave_clicked();
     void on_pushButtonUpdate_clicked();
     void on_pushButtonDelete_clicked();
+    void setDefaults();
+    void updateList();
 };

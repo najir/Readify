@@ -1,4 +1,6 @@
 <RCC>
-    <qresource prefix="bookjournal">
+    <qresource prefix="/rsc">
+        <file>img/icons/book.png</file>
+        <file>img/icons/open-book.png</file>
     </qresource>
 </RCC>
