@@ -14,6 +14,8 @@ public:
 private:
     std::string tempName;               // Saves old book name for updating changes on db
     Ui::bookjournalClass ui;
+
+private slots:
     void on_listWidget_doubleClicked();
     void on_pushButtonNew_clicked();
     void on_pushButtonCancel_clicked();

@@ -16,6 +16,8 @@ bookjournal::bookjournal(QWidget *parent)
     : QMainWindow(parent){
     ui.setupUi(this);
     dbObj.createDB(DB);
+    ui.widgetMain->setVisible(1);
+    ui.widgetPage->setVisible(0);
 }
 
 bookjournal::~bookjournal(){
@@ -77,8 +79,8 @@ void bookjournal::on_listWidget_doubleClicked() {
 }
 void bookjournal::on_pushButtonNew_clicked() {
     //Hide main menu, show new menu
-    ui.widgetMain->hide();
-    ui.widgetPage->show();
+    ui.widgetMain->setVisible(0);
+    ui.widgetPage->setVisible(1);
 }
 
 /******************************
