@@ -91,11 +91,13 @@
     <QtRcc Include="bookjournal.qrc" />
     <QtUic Include="bookjournal.ui" />
     <QtMoc Include="bookjournal.h" />
+    <ClCompile Include="..\dep\sqlite3.c" />
     <ClCompile Include="bookjournal.cpp" />
     <ClCompile Include="bookjournaldb.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\dep\sqlite3.h" />
     <ClInclude Include="bookjournaldb.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -7,24 +7,18 @@
 #include "bookjournaldb.h"
 
 const char* DIR = "../rsc/bookDB.db";
-
-int main() {
-
-
-}
+std::vector<dbStruct> databaseObject::dbCallData;
 
 /******************************
 *  Internal DB Calls
 ******************************/
 int databaseObject::createDB(sqlite3* DB) {
 	int status = 0;
-	char* messageError;
 
 	try {
 		status = sqlite3_open(DIR, &DB);
 		if (status != SQLITE_OK) {
 			std::cerr << "Error Open DB" << std::endl;
-			sqlite3_free(messageError);
 		}
 		else {
 			std::cout << "DB Opened successfully" << std::endl;
