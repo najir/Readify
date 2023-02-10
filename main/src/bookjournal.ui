@@ -14,25 +14,48 @@
    <string>bookjournal</string>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="styleSheet">
+    <string notr="true">QWidget{
+color: rgb(184, 184, 148);
+}
+QWidget#widgetMain, QWidget#widgetPage{
+color: rgb(184, 184, 148);
+background-color: rgba(19, 38, 57, 180);
+}
+QPushButton{
+background-color: rgb(51, 102, 153);
+}
+QVBoxLayout, QLineEdit, QTextEdit, QSpinBox{
+border: 1px solid rgb(51, 102, 153);
+background-color: rgb(36, 51, 66);
+}
+QListWidget{
+border: 1px solid rgb(51, 102, 153);
+background-color: rgba(0,0,0,0);
+}</string>
+   </property>
    <widget class="QWidget" name="widgetPage" native="true">
     <property name="geometry">
      <rect>
       <x>50</x>
       <y>150</y>
-      <width>601</width>
+      <width>581</width>
       <height>451</height>
      </rect>
     </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <widget class="QWidget" name="verticalLayoutWidget_2">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>541</width>
-       <height>411</height>
+       <x>10</x>
+       <y>10</y>
+       <width>561</width>
+       <height>431</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayoutPage">
@@ -90,13 +113,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
          <number>12</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="checkBox">
-          <property name="text">
-           <string>CheckBox</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="label">
           <property name="text">
            <string>Book Finished?</string>
@@ -104,9 +120,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinBoxRead">
-          <property name="autoFillBackground">
-           <bool>false</bool>
+         <widget class="QCheckBox" name="checkBox">
+          <property name="text">
+           <string>CheckBox</string>
           </property>
          </widget>
         </item>
@@ -114,6 +130,13 @@ li.checked::marker { content: &quot;\2612&quot;; }
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Page Number Amount?</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="spinBoxRead">
+          <property name="autoFillBackground">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -141,17 +164,23 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <rect>
       <x>50</x>
       <y>150</y>
-      <width>601</width>
+      <width>581</width>
       <height>461</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+background-color: rgb(51, 102, 153)
+}
+</string>
     </property>
     <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
-       <width>541</width>
-       <height>411</height>
+       <x>10</x>
+       <y>10</y>
+       <width>561</width>
+       <height>441</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayoutMain">
@@ -168,8 +197,26 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </layout>
     </widget>
    </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>750</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: black;
+background-color: rgba(100,100,100, 25);</string>
+    </property>
+    <property name="text">
+     <string>Version 0.1.0</string>
+    </property>
+   </widget>
    <zorder>widgetMain</zorder>
    <zorder>widgetPage</zorder>
+   <zorder>label_3</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="enabled">

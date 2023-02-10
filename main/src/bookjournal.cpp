@@ -8,6 +8,11 @@
 
 sqlite3* DB;
 databaseObject dbObj;
+std::string welcomeMessage = 
+"Welcome to my personal book journal project. This application is used to store and maintain"
+" a journal of all books you are or have read. All data is stored locally and the application"
+" has zero reliance on any cloud or online service. To begin: Click \" Add New\" Enter the info"
+" and finally click save to store it in your journal.";
 
 /******************************
 * GUI initialization
@@ -19,6 +24,7 @@ bookjournal::bookjournal(QWidget *parent)
     setVisual();
     ui.widgetMain->setVisible(1);
     ui.widgetPage->setVisible(0);
+    QMessageBox::about(this, "Welcome", welcomeMessage.c_str());
 }
 bookjournal::~bookjournal(){
 
@@ -37,18 +43,16 @@ void bookjournal::setDefaults() {
     ui.spinBoxRead->setValue(0);
 }
 void bookjournal::setVisual() {
+    //Main Window
+    this->setWindowFlags(this->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
+
     //Main Background
     QPixmap back;
     back.load(":/rsc/img/bcg/tempBack.png");
-    back = back.scaled(this->size()*1.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    back = back.scaled(this->size()*1.1, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     QPalette bgPal;
     bgPal.setBrush(QPalette::Window, back);
     this->setPalette(bgPal);
-
-    //List and Edit menus
-    ui.widgetMain->setStyleSheet("background-color:darkGray;");
-    ui.widgetPage->setStyleSheet("background-color:darkGray;");
-
 
 }
 void bookjournal::updateList() {

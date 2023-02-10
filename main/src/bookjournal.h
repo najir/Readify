@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <qmessagebox.h>
 #include "ui_bookjournal.h"
 
 class bookjournal : public QMainWindow
