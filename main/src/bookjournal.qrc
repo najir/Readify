@@ -2,5 +2,6 @@
     <qresource prefix="/rsc">
         <file>img/icons/book.png</file>
         <file>img/icons/open-book.png</file>
+        <file>img/bcg/tempBack.png</file>
     </qresource>
 </RCC>

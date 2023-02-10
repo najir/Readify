@@ -16,10 +16,10 @@ bookjournal::bookjournal(QWidget *parent)
     : QMainWindow(parent){
     ui.setupUi(this);
     dbObj.createDB(DB);
+    setVisual();
     ui.widgetMain->setVisible(1);
     ui.widgetPage->setVisible(0);
 }
-
 bookjournal::~bookjournal(){
 
 }
@@ -32,9 +32,24 @@ void bookjournal::setDefaults() {
     ui.checkBox->setChecked(0);
     ui.lineEditName->setText("Name");
     ui.lineEditAuthor->setText("Author");
-    ui.textEditDesc->setText("");
-    ui.textEditNotes->setText("");
+    ui.textEditDesc->setText("Description");
+    ui.textEditNotes->setText("Notes");
     ui.spinBoxRead->setValue(0);
+}
+void bookjournal::setVisual() {
+    //Main Background
+    QPixmap back;
+    back.load(":/rsc/img/bcg/tempBack.png");
+    back = back.scaled(this->size()*1.5, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    QPalette bgPal;
+    bgPal.setBrush(QPalette::Window, back);
+    this->setPalette(bgPal);
+
+    //List and Edit menus
+    ui.widgetMain->setStyleSheet("background-color:darkGray;");
+    ui.widgetPage->setStyleSheet("background-color:darkGray;");
+
+
 }
 void bookjournal::updateList() {
     // This function is used to create/update the list of widgets holding book data
@@ -88,8 +103,8 @@ void bookjournal::on_pushButtonNew_clicked() {
 ******************************/
 void bookjournal::on_pushButtonCancel_clicked() {
     //Hide new menu, show main menu, reset data to default
-    ui.widgetMain->show();
-    ui.widgetPage->hide();
+    ui.widgetMain->setVisible(1);
+    ui.widgetPage->setVisible(0);
     setDefaults();
     
 }
@@ -106,8 +121,8 @@ void bookjournal::on_pushButtonSave_clicked() {
     
     dbObj.insertBook(DB, saveValues);
     updateList();
-    ui.widgetMain->show();
-    ui.widgetPage->hide();
+    ui.widgetMain->setVisible(1);
+    ui.widgetPage->setVisible(0);
     setDefaults();
 }
 void bookjournal::on_pushButtonUpdate_clicked() {
@@ -123,8 +138,8 @@ void bookjournal::on_pushButtonUpdate_clicked() {
 
     dbObj.updateBook(DB, saveValues, tempName);
     updateList();
-    ui.widgetMain->show();
-    ui.widgetPage->hide();
+    ui.widgetMain->setVisible(1);
+    ui.widgetPage->setVisible(0);
     setDefaults();
 }
 void bookjournal::on_pushButtonDelete_clicked() {
@@ -133,7 +148,7 @@ void bookjournal::on_pushButtonDelete_clicked() {
     dbObj.deleteBook(DB, NULL, ui.lineEditName->text().toStdString());
     updateList();
 
-    ui.widgetMain->show();
-    ui.widgetPage->hide();
+    ui.widgetMain->setVisible(1);
+    ui.widgetPage->setVisible(0);
     setDefaults();
 }
