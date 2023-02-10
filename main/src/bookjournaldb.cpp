@@ -16,7 +16,7 @@ int main() {
 /******************************
 *  Internal DB Calls
 ******************************/
-int createDB(sqlite3* DB) {
+int databaseObject::createDB(sqlite3* DB) {
 	int status = 0;
 	char* messageError;
 
@@ -36,11 +36,11 @@ int createDB(sqlite3* DB) {
 
 	return 0;
 }
-int deleteDB(sqlite3* DB) {
+int databaseObject::deleteDB(sqlite3* DB) {
 	sqlite3_close(DB);
 	return 0;
 }
-int createTable(sqlite3* DB) {
+int databaseObject::createTable(sqlite3* DB) {
 	int status = 0;
 	char* messageError;
 	std::string sql = "CREATE TABLE IF NOT EXISTS BOOKS("
@@ -68,34 +68,47 @@ int createTable(sqlite3* DB) {
 	}
 	return 0;
 }
-int callBack(void* dbData, int colNumber, char** colFields, char** colNames, std::vector<dbStruct>* dbVector) {
+int databaseObject::callBack(void* dbData, int colNumber, char** colFields, char** colNames) {
 	int i;
-	dbStruct* returnData = (dbStruct*)dbData;
-	if (colNumber > 1) {							// If getAll is called
-	
-	}
+	dbStruct* data = (dbStruct*)dbData;
+
 	for (i = 0; i < colNumber; i++) {
-		if (strcmp(colNames[i], 'PAGES') == 0) {
-			returnData->PAGES = atoi(colFields[i])
+		if (strcmp(colNames[i], "PAGES") == 0) {
+			data->PAGES = atoi(colFields[i]);
 		}
-		else if (strcmp(colNames[i], 'ID') == 0) {
-			returnData->ID = atoi(colFields[i])
+		else if (strcmp(colNames[i], "ID") == 0) {
+			data->ID = atoi(colFields[i]);
 		}
-		else if (stcmp(colNames[i], 'READ?') == 0) {
-			returnData->READ = atoi(colFields[i])
+		else if (strcmp(colNames[i], "READ?") == 0) {
+			data->READ = atoi(colFields[i]);
 		}
-	}
-	if(dbVector){
-		dbVector.push_back(returnData);
 	}
 	return 0;
 }
-int dbQuery(sqlite3* DB, std::string query, void* dbData, std::vector<dbStruct>* dbVector) {
+int databaseObject::callBackGetAll(void* dbData, int colNumber, char** colFields, char** colNames) {
+	int i;
+	dbStruct* data = (dbStruct*)dbData;
+
+	for (i = 0; i < colNumber; i++) {
+		if (strcmp(colNames[i], "PAGES") == 0) {
+			data->PAGES = atoi(colFields[i]);
+		}
+		else if (strcmp(colNames[i], "ID") == 0) {
+			data->ID = atoi(colFields[i]);
+		}
+		else if (strcmp(colNames[i], "READ?") == 0) {
+			data->READ = atoi(colFields[i]);
+		}
+	}
+	dbCallData.push_back(*data);
+	return 0;
+}
+int databaseObject::dbQuery(sqlite3* DB, std::string query, void* dbData) {
 	int status = 0;
 	char* messageError;
 
 	try {
-		status = sqlite3_exec(DB, query.c_str(), callBack(), &dbData, &messageError);
+		status = sqlite3_exec(DB, query.c_str(), callBack, &dbData, &messageError);
 		if (status != SQLITE_OK) {
 			std::cerr << "Query Error" << std::endl;
 			sqlite3_free(messageError);
@@ -104,7 +117,7 @@ int dbQuery(sqlite3* DB, std::string query, void* dbData, std::vector<dbStruct>*
 			std::cout << "Query Successfully passed!" << std::endl;
 		}
 	}
-	catch (const exception& e) {
+	catch (const std::exception& e) {
 		std::cerr << e.what();
 	}
 	return 0;
@@ -115,41 +128,31 @@ int dbQuery(sqlite3* DB, std::string query, void* dbData, std::vector<dbStruct>*
 * 
 * Abstraction Layer that processes query info and manages returned data if needed.
 ******************************/
-sqlite3* initiateDB() {
-	sqlite3* DB;
-	createDB(&DB);
-	createTable(&DB);
-	
-	return DB;
-}
-void finalizeDB(sqlite3* DB) {
-	deleteDB(DB)
-}
-void insertBook(sqlite3* DB, dbStruct data) {
+void databaseObject::insertBook(sqlite3* DB, dbStruct data) {
 	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) VALUES(";		
-	insertQuery += data.NAME + ', ';
-	insertQuery += data.AUTHOR + ', ';
-	insertQuery += data.DESCRIPTION + ', ';
-	insertQuery += data.NOTES + ', ';
-	insertQuery += data.READ + ', ';
-	insertQuery += data.PAGES + ');';
+	insertQuery += data.NAME + ", ";
+	insertQuery += data.AUTHOR + ", ";
+	insertQuery += data.DESCRIPTION + ", ";
+	insertQuery += data.NOTES + ", ";
+	insertQuery += data.READ + ", ";
+	insertQuery += data.PAGES + ");";
 
-	dbQuery(DB, insertQuery);
+	dbQuery(DB, insertQuery, NULL);
 
 }
-void deleteBook(sqlite3* DB, int ID, std::string bookName) {
+void databaseObject::deleteBook(sqlite3* DB, int ID, std::string bookName) {
 	std::string deleteQuery = "DELETE FROM BOOKS WHERE ";
 	if (ID) { deleteQuery += "ID = " + ID; }
-	else if (bookName) { deleteQuery += "NAME = bookName" + ID; }
+	else if (!bookName.empty()) { deleteQuery += "NAME = bookName" + ID; }
 
-	dbQuery(DB, deleteQuery);
+	dbQuery(DB, deleteQuery, NULL);
 }
-void updateBook(sqlite3* DB, dbStruct data, std::string tempName) {
+void databaseObject::updateBook(sqlite3* DB, dbStruct data, std::string tempName) {
 	int idValue = 0;
 	std::string updateSearch = "";
 
 	//Need to get id of bookname location then use that value for WHERE
-	dbQuery(DB, updateSearch, NULL, NULL);
+	dbQuery(DB, updateSearch, NULL);
 
 	std::string updateQuery = "UPDATE BOOKS SET(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) WHERE(";
 	updateQuery += "NAME = " + data.NAME;
@@ -159,24 +162,42 @@ void updateBook(sqlite3* DB, dbStruct data, std::string tempName) {
 	updateQuery += "PAGES = " + data.PAGES;
 	updateQuery += ") WHERE ID = " + idValue;
 
-	dbQuery(DB, updateQuery, NULL, NULL);
+	dbQuery(DB, updateQuery, NULL);
 
 }
-dbStruct getBook(sqlite3* DB, int ID, std::string bookName) {
+dbStruct databaseObject::getBook(sqlite3* DB, int ID, std::string bookName) {
 	dbStruct returnData;
 	std::string getQuery = "SELECT * FROM BOOKS WHERE ";
 	if (ID) { getQuery += "ID = " + ID; }
 	else if (!bookName.empty()) { getQuery += "NAME = " + bookName; }
 
-	dbQuery(DB, getQuery, &returnData, NULL);
+	dbQuery(DB, getQuery, &returnData);
 	return returnData;
 
 }
-std::vector<dbStruct> getAllBooks(sqlite3* DB) {
+std::vector<dbStruct> databaseObject::getAllBooks(sqlite3* DB) {
+	int status = 0;
+	char* messageError;
 	dbStruct returnData;
-	std::vector<dbStruct> dbVector;
-	std::string getAllQuery = "SELECT * FROM BOOKS";
+	std::vector<dbStruct> returnVector;
+	dbStruct dbData;
+	std::string query = "SELECT * FROM BOOKS";
 
-	dbQuery(DB, getAllQuery, &returnData, &dbVector);
+	try {
+		status = sqlite3_exec(DB, query.c_str(), callBackGetAll, &dbData, &messageError);
+		if (status != SQLITE_OK) {
+			std::cerr << "Query Error" << std::endl;
+			sqlite3_free(messageError);
+		}
+		else {
+			std::cout << "Query Successfully passed!" << std::endl;
+		}
+	}
+	catch (const std::exception& e) {
+		std::cerr << e.what();
+	}
+	returnVector = dbCallData;
+	dbCallData.clear();
 
+	return returnVector;
 }

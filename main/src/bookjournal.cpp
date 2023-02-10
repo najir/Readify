@@ -7,6 +7,7 @@
 #include "bookjournaldb.h"
 
 sqlite3* DB;
+databaseObject dbObj;
 
 /******************************
 * GUI initialization
@@ -14,7 +15,7 @@ sqlite3* DB;
 bookjournal::bookjournal(QWidget *parent)
     : QMainWindow(parent){
     ui.setupUi(this);
-    createDB(DB);
+    dbObj.createDB(DB);
 }
 
 bookjournal::~bookjournal(){
@@ -35,9 +36,13 @@ void bookjournal::setDefaults() {
 }
 void bookjournal::updateList() {
     // This function is used to create/update the list of widgets holding book data
-    std::vector<dbStruct> listStructs = getAllBooks(DB);
+    databaseObject dbObj;
+    ui.listWidget->clear();
+    std::vector<dbStruct> listStructs = dbObj.getAllBooks(DB);
     dbStruct tempStruct;
     int i = 0;
+    std::string bookImg = ":/rsc/img/icon/open-book.png";
+
     QString listText = "";
     for (i; i < listStructs.size(); i++) {
         tempStruct = listStructs[i];
@@ -45,7 +50,10 @@ void bookjournal::updateList() {
         listText += "    |    " + tempStruct.AUTHOR;
         listText += "    |    " + tempStruct.PAGES;
         listText += " Pages";
-        QListWidgetItem()   
+        if (tempStruct.READ) { bookImg = ":/rsc/img/icon/open-book.png"; }
+        else { ":/rsc/img/icon/book.png"; }
+        QListWidgetItem* widgetItem = new QListWidgetItem(QIcon(), listText);
+        ui.listWidget->addItem(widgetItem);
     }
 }
 
@@ -86,6 +94,7 @@ void bookjournal::on_pushButtonCancel_clicked() {
 void bookjournal::on_pushButtonSave_clicked() {
     //push db call, hide new menu, show main menu + update list
     dbStruct saveValues;
+    databaseObject dbObj;
     saveValues.NAME = ui.lineEditName->text().toDouble();
     saveValues.AUTHOR = ui.lineEditAuthor->text().toDouble();
     saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toDouble();
@@ -93,7 +102,7 @@ void bookjournal::on_pushButtonSave_clicked() {
     saveValues.READ = ui.checkBox->isChecked();
     saveValues.PAGES = ui.spinBoxRead->value();
     
-    insertBook(DB, saveValues);
+    dbObj.insertBook(DB, saveValues);
     updateList();
     ui.widgetMain->show();
     ui.widgetPage->hide();
@@ -102,6 +111,7 @@ void bookjournal::on_pushButtonSave_clicked() {
 void bookjournal::on_pushButtonUpdate_clicked() {
     //push db call, hide new menu, show main menu + update list
     dbStruct saveValues;
+    databaseObject dbObj;
     saveValues.NAME = ui.lineEditName->text().toDouble();
     saveValues.AUTHOR = ui.lineEditAuthor->text().toDouble();
     saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toDouble();
@@ -109,7 +119,7 @@ void bookjournal::on_pushButtonUpdate_clicked() {
     saveValues.READ = ui.checkBox->isChecked();
     saveValues.PAGES = ui.spinBoxRead->value();
 
-    updateBook(DB, saveValues, tempName);
+    dbObj.updateBook(DB, saveValues, tempName);
     updateList();
     ui.widgetMain->show();
     ui.widgetPage->hide();
@@ -117,7 +127,8 @@ void bookjournal::on_pushButtonUpdate_clicked() {
 }
 void bookjournal::on_pushButtonDelete_clicked() {
     //push db call, hide new menu, show main menu + update list
-    deleteBook(DB, NULL, ui.lineEditName->text().toStdString());
+    databaseObject dbObj;
+    dbObj.deleteBook(DB, NULL, ui.lineEditName->text().toStdString());
     updateList();
 
     ui.widgetMain->show();
