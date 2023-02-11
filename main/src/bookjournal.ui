@@ -234,7 +234,11 @@ background-color: rgb(51, 102, 153)
       <item>
        <widget class="QListWidget" name="listWidget">
         <property name="styleSheet">
-         <string notr="true"/>
+         <string notr="true">QListWidget::item{
+border: 2px solid rgb(32, 64, 96);
+background-color: rgba(122, 122, 82, 120);
+}
+font: 16pt &quot;Ink Free&quot;;</string>
         </property>
        </widget>
       </item>
@@ -270,7 +274,7 @@ background-color: rgba(100,100,100, 25);</string>
      <rect>
       <x>5</x>
       <y>0</y>
-      <width>891</width>
+      <width>591</width>
       <height>81</height>
      </rect>
     </property>

@@ -75,11 +75,11 @@ void bookjournal::updateList() {
         listText += " | " + tempStruct.AUTHOR;
         listText += " | " + std::to_string(tempStruct.PAGES);
         listText += "Pg";
-        if (int(tempStruct.READ)) { bookDir = ":/rsc/img/icons/open-book.png"; }
-        else { bookDir = ":/rsc/img/icons/book.png"; }
+        if (int(tempStruct.READ)) { bookDir = ":/rsc/img/icons/book.png"; }
+        else { bookDir = ":/rsc/img/icons/open-book.png"; }
         bookImg = QIcon(bookDir.c_str());
         QListWidgetItem* widgetItem = new QListWidgetItem(QIcon(bookImg), QString::fromStdString(listText));
-        widgetItem->setFont(QFont("Ink Free", 20));
+        widgetItem->setFont(QFont("Ink Free", 16));
         ui.listWidget->addItem(widgetItem);
     }
 }
