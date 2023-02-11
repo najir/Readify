@@ -4,16 +4,14 @@
 * 2/3/23
 ************************************************************/
 #include "bookjournal.h"
-#include "bookjournaldb.h"
 
-sqlite3* DB;
 databaseObject dbObj;
+sqlite3* DB;
 std::string welcomeMessage = 
 "Welcome to my personal book journal project. This application is used to store and maintain"
 " a journal of all books you are or have read. All data is stored locally and the application"
 " has zero reliance on any cloud or online service. To begin: Click \" Add New\" Enter the info"
 " and finally click save to store it in your journal.";
-
 /******************************
 * GUI initialization
 ******************************/
@@ -24,6 +22,8 @@ bookjournal::bookjournal(QWidget *parent)
     setVisual();
     ui.widgetMain->setVisible(1);
     ui.widgetPage->setVisible(0);
+    updateList();
+    setDefaults();
     QMessageBox::about(this, "Welcome", welcomeMessage.c_str());
 }
 bookjournal::~bookjournal(){
@@ -38,13 +38,18 @@ void bookjournal::setDefaults() {
     ui.checkBox->setChecked(0);
     ui.lineEditName->setText("Name");
     ui.lineEditAuthor->setText("Author");
-    ui.textEditDesc->setText("Description");
-    ui.textEditNotes->setText("Notes");
-    ui.spinBoxRead->setValue(0);
+    ui.textEditDesc->setText("Desc");
+    ui.textEditNotes->setText("Note");
+    ui.spinBoxRead->setValue(1);
 }
 void bookjournal::setVisual() {
     //Main Window
     this->setWindowFlags(this->windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
+
+    //Fonts
+    QFontDatabase::addApplicationFont(":/rsc/font/CantWrite-K7nqA.ttf");
+    //QFont mainFont("CantWrite-K7nqA");
+    //QApplication::setFont(mainFont);
 
     //Main Background
     QPixmap back;
@@ -57,23 +62,23 @@ void bookjournal::setVisual() {
 }
 void bookjournal::updateList() {
     // This function is used to create/update the list of widgets holding book data
-    databaseObject dbObj;
     ui.listWidget->clear();
     std::vector<dbStruct> listStructs = dbObj.getAllBooks(DB);
     dbStruct tempStruct;
     int i = 0;
-    std::string bookImg = ":/rsc/img/icon/open-book.png";
+    std::string bookImg;
 
-    QString listText = "";
+    std::string listText = "";
     for (i; i < listStructs.size(); i++) {
         tempStruct = listStructs[i];
-        listText = tempStruct.NAME.c_str();
-        listText += "    |    " + tempStruct.AUTHOR;
-        listText += "    |    " + tempStruct.PAGES;
+        listText = tempStruct.NAME;
+        listText += "    |||    " + tempStruct.AUTHOR;
+        listText += "    |||    " + std::to_string(tempStruct.PAGES);
         listText += " Pages";
-        if (tempStruct.READ) { bookImg = ":/rsc/img/icon/open-book.png"; }
-        else { ":/rsc/img/icon/book.png"; }
-        QListWidgetItem* widgetItem = new QListWidgetItem(QIcon(), listText);
+        if (int(tempStruct.READ)) { bookImg = ":/rsc/img/icon/open-book.png"; }
+        else { bookImg = ":/rsc/img/icon/book.png"; }
+        QListWidgetItem* widgetItem = new QListWidgetItem(QIcon(bookImg.c_str()), QString::fromStdString(listText));
+        widgetItem->setFont(QFont("Ink Free", 18));
         ui.listWidget->addItem(widgetItem);
     }
 }
@@ -115,11 +120,10 @@ void bookjournal::on_pushButtonCancel_clicked() {
 void bookjournal::on_pushButtonSave_clicked() {
     //push db call, hide new menu, show main menu + update list
     dbStruct saveValues;
-    databaseObject dbObj;
-    saveValues.NAME = ui.lineEditName->text().toDouble();
-    saveValues.AUTHOR = ui.lineEditAuthor->text().toDouble();
-    saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toDouble();
-    saveValues.NOTES = ui.textEditNotes->toPlainText().toDouble();
+    saveValues.NAME = ui.lineEditName->text().toStdString();
+    saveValues.AUTHOR = ui.lineEditAuthor->text().toStdString();
+    saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toStdString();
+    saveValues.NOTES = ui.textEditNotes->toPlainText().toStdString();
     saveValues.READ = ui.checkBox->isChecked();
     saveValues.PAGES = ui.spinBoxRead->value();
     
@@ -132,11 +136,10 @@ void bookjournal::on_pushButtonSave_clicked() {
 void bookjournal::on_pushButtonUpdate_clicked() {
     //push db call, hide new menu, show main menu + update list
     dbStruct saveValues;
-    databaseObject dbObj;
-    saveValues.NAME = ui.lineEditName->text().toDouble();
-    saveValues.AUTHOR = ui.lineEditAuthor->text().toDouble();
-    saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toDouble();
-    saveValues.NOTES = ui.textEditNotes->toPlainText().toDouble();
+    saveValues.NAME = ui.lineEditName->text().toStdString();
+    saveValues.AUTHOR = ui.lineEditAuthor->text().toStdString();
+    saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toStdString();
+    saveValues.NOTES = ui.textEditNotes->toPlainText().toStdString();
     saveValues.READ = ui.checkBox->isChecked();
     saveValues.PAGES = ui.spinBoxRead->value();
 
@@ -148,7 +151,6 @@ void bookjournal::on_pushButtonUpdate_clicked() {
 }
 void bookjournal::on_pushButtonDelete_clicked() {
     //push db call, hide new menu, show main menu + update list
-    databaseObject dbObj;
     dbObj.deleteBook(DB, NULL, ui.lineEditName->text().toStdString());
     updateList();
 

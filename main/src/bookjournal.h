@@ -2,7 +2,9 @@
 
 #include <QtWidgets/QMainWindow>
 #include <qmessagebox.h>
+#include <QFontDatabase>
 #include "ui_bookjournal.h"
+#include "bookjournaldb.h"
 
 class bookjournal : public QMainWindow
 {

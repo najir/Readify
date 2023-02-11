@@ -2,16 +2,17 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "../dep/sqlite3.h"
 
 struct dbStruct {
-	int ID;
+	//int ID= 0;
 	std::string NAME;
 	std::string AUTHOR;
 	std::string DESCRIPTION;
 	std::string NOTES;
-	bool READ;
-	int PAGES;
+	int READ = 0;
+	int PAGES = 1;
 };
 
 class databaseObject {

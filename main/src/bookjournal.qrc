@@ -3,5 +3,6 @@
         <file>img/icons/book.png</file>
         <file>img/icons/open-book.png</file>
         <file>img/bcg/tempBack.png</file>
+        <file>font/CantWrite-K7nqA.ttf</file>
     </qresource>
 </RCC>

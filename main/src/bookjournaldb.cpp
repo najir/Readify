@@ -6,7 +6,7 @@
 ************************************************************/
 #include "bookjournaldb.h"
 
-const char* DIR = "../rsc/bookDB.db";
+const char* DIR = "./db/bookDB.db";
 std::vector<dbStruct> databaseObject::dbCallData;
 
 /******************************
@@ -27,7 +27,8 @@ int databaseObject::createDB(sqlite3* DB) {
 	catch (std::exception& e) {
 		std::cerr << e.what();
 	}
-
+	sqlite3_close(DB);
+	createTable(DB);
 	return 0;
 }
 int databaseObject::deleteDB(sqlite3* DB) {
@@ -37,17 +38,18 @@ int databaseObject::deleteDB(sqlite3* DB) {
 int databaseObject::createTable(sqlite3* DB) {
 	int status = 0;
 	char* messageError;
-	std::string sql = "CREATE TABLE IF NOT EXISTS BOOKS("
-		"ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-		"NAME			TEXT NOT NULL, "
-		"AUTHOR			TEXT NOT NULL, "
+	sqlite3_open(DIR, &DB);
+	const char* sql = "CREATE TABLE IF NOT EXISTS BOOKS ("
+		"NAME			TEXT, "
+		"AUTHOR			TEXT, "
 		"DESCRIPTION	TEXT, "
 		"NOTES			TEXT, "
-		"READ?			BOOL, "	
-		"PAGES			INT NOT NULL);";
+		"READ			INT, "	
+		"PAGES			INT);";
+	//sql = "create table test (number1 int);";
 
 	try {
-		status = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
+		status = sqlite3_exec(DB, sql, NULL, NULL, &messageError);
 
 		if (status != SQLITE_OK) {
 			std::cerr << "Error Create Table" << std::endl;
@@ -60,21 +62,24 @@ int databaseObject::createTable(sqlite3* DB) {
 	catch (const std::exception& e) {
 		std::cerr << e.what();
 	}
+	sqlite3_close(DB);
 	return 0;
 }
 int databaseObject::callBack(void* dbData, int colNumber, char** colFields, char** colNames) {
 	int i;
-	dbStruct* data = (dbStruct*)dbData;
+	if (dbData != NULL) {
+		dbStruct* data = (dbStruct*)dbData;
 
-	for (i = 0; i < colNumber; i++) {
-		if (strcmp(colNames[i], "PAGES") == 0) {
-			data->PAGES = atoi(colFields[i]);
-		}
-		else if (strcmp(colNames[i], "ID") == 0) {
-			data->ID = atoi(colFields[i]);
-		}
-		else if (strcmp(colNames[i], "READ?") == 0) {
-			data->READ = atoi(colFields[i]);
+		for (i = 0; i < colNumber; i++) {
+			if (strcmp(colNames[i], "PAGES") == 0) {
+				data->PAGES = atoi(colFields[i]);
+			}
+			//else if (strcmp(colNames[i], "ID") == 0) {
+				//data->ID = atoi(colFields[i]);
+			//}
+			else if (strcmp(colNames[i], "READ?") == 0) {
+				data->READ = atoi(colFields[i]);
+			}
 		}
 	}
 	return 0;
@@ -87,11 +92,17 @@ int databaseObject::callBackGetAll(void* dbData, int colNumber, char** colFields
 		if (strcmp(colNames[i], "PAGES") == 0) {
 			data->PAGES = atoi(colFields[i]);
 		}
-		else if (strcmp(colNames[i], "ID") == 0) {
-			data->ID = atoi(colFields[i]);
-		}
-		else if (strcmp(colNames[i], "READ?") == 0) {
+		//else if (strcmp(colNames[i], "ID") == 0) {
+			//data->ID = atoi(colFields[i]);
+		//}
+		else if (strcmp(colNames[i], "READ") == 0) {
 			data->READ = atoi(colFields[i]);
+		}
+		else if (strcmp(colNames[i], "NAME") == 0) {
+			data->NAME = colFields[i];
+		}
+		else if (strcmp(colNames[i], "AUTHOR") == 0) {
+			data->AUTHOR = colFields[i];
 		}
 	}
 	dbCallData.push_back(*data);
@@ -102,7 +113,15 @@ int databaseObject::dbQuery(sqlite3* DB, std::string query, void* dbData) {
 	char* messageError;
 
 	try {
-		status = sqlite3_exec(DB, query.c_str(), callBack, &dbData, &messageError);
+		status = sqlite3_open(DIR, &DB);
+		if (status != SQLITE_OK) {
+			std::cerr << "Query Error" << std::endl;
+		}
+		else {
+			std::cout << "Query Successfully passed!" << std::endl;
+		}
+
+		status = sqlite3_exec(DB, query.c_str(), callBack, 0, &messageError);
 		if (status != SQLITE_OK) {
 			std::cerr << "Query Error" << std::endl;
 			sqlite3_free(messageError);
@@ -114,6 +133,7 @@ int databaseObject::dbQuery(sqlite3* DB, std::string query, void* dbData) {
 	catch (const std::exception& e) {
 		std::cerr << e.what();
 	}
+	sqlite3_close(DB);
 	return 0;
 }
 
@@ -123,16 +143,15 @@ int databaseObject::dbQuery(sqlite3* DB, std::string query, void* dbData) {
 * Abstraction Layer that processes query info and manages returned data if needed.
 ******************************/
 void databaseObject::insertBook(sqlite3* DB, dbStruct data) {
-	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) VALUES(";		
-	insertQuery += data.NAME + ", ";
-	insertQuery += data.AUTHOR + ", ";
-	insertQuery += data.DESCRIPTION + ", ";
-	insertQuery += data.NOTES + ", ";
-	insertQuery += data.READ + ", ";
-	insertQuery += data.PAGES + ");";
+	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, READ, PAGES) VALUES(";
+	insertQuery += "'" + data.NAME + "', ";
+	insertQuery += "'" + data.AUTHOR + "', ";
+	insertQuery += "'" + data.DESCRIPTION + "', ";
+	insertQuery += "'" + data.NOTES + "', ";	
+	insertQuery += "'" + std::to_string(data.READ) + "', ";
+	insertQuery += "'" + std::to_string(data.PAGES) + "');";
 
 	dbQuery(DB, insertQuery, NULL);
-
 }
 void databaseObject::deleteBook(sqlite3* DB, int ID, std::string bookName) {
 	std::string deleteQuery = "DELETE FROM BOOKS WHERE ";
@@ -178,6 +197,13 @@ std::vector<dbStruct> databaseObject::getAllBooks(sqlite3* DB) {
 	std::string query = "SELECT * FROM BOOKS";
 
 	try {
+		status = sqlite3_open(DIR, &DB);
+		if (status != SQLITE_OK) {
+			std::cerr << "Query Error" << std::endl;
+		}
+		else {
+			std::cout << "Query Successfully passed!" << std::endl;
+		}
 		status = sqlite3_exec(DB, query.c_str(), callBackGetAll, &dbData, &messageError);
 		if (status != SQLITE_OK) {
 			std::cerr << "Query Error" << std::endl;
@@ -192,6 +218,7 @@ std::vector<dbStruct> databaseObject::getAllBooks(sqlite3* DB) {
 	}
 	returnVector = dbCallData;
 	dbCallData.clear();
+	sqlite3_close(DB);
 
 	return returnVector;
 }
