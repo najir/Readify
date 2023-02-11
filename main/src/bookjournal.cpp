@@ -48,8 +48,6 @@ void bookjournal::setVisual() {
 
     //Fonts
     QFontDatabase::addApplicationFont(":/rsc/font/CantWrite-K7nqA.ttf");
-    //QFont mainFont("CantWrite-K7nqA");
-    //QApplication::setFont(mainFont);
 
     //Main Background
     QPixmap back;
@@ -72,10 +70,11 @@ void bookjournal::updateList() {
     std::string listText = "";
     for (i; i < listStructs.size(); i++) {
         tempStruct = listStructs[i];
-        listText = tempStruct.NAME;
-        listText += "    |||    " + tempStruct.AUTHOR;
-        listText += "    |||    " + std::to_string(tempStruct.PAGES);
-        listText += " Pages";
+        listText = std::to_string(tempStruct.ID);
+        listText += ". " + tempStruct.NAME;
+        listText += " | " + tempStruct.AUTHOR;
+        listText += " | " + std::to_string(tempStruct.PAGES);
+        listText += "Pg";
         if (int(tempStruct.READ)) { bookDir = ":/rsc/img/icons/open-book.png"; }
         else { bookDir = ":/rsc/img/icons/book.png"; }
         bookImg = QIcon(bookDir.c_str());
@@ -91,7 +90,17 @@ void bookjournal::updateList() {
 ******************************/
 void bookjournal::on_listWidget_doubleClicked() {
     dbStruct bookDataEntry;
-    dbObj.getBook(DB, NULL, ui.listWidget->currentItem()->text().toStdString());
+    std::string bookText = ui.listWidget->currentItem()->text().toStdString();
+    std::string findQuery;
+    int i;
+    
+    for (i = 0; i < bookText.size(); i++) {
+        if (bookText[i] == '.') {
+            findQuery = bookText.substr(0, i);
+            i = bookText.size();
+        }
+    }
+    bookDataEntry = dbObj.getBook(DB, NULL, findQuery);
     tempName = bookDataEntry.NAME;
 
     ui.lineEditName->setText(QString(bookDataEntry.NAME.c_str()));

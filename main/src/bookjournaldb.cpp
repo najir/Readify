@@ -40,13 +40,13 @@ int databaseObject::createTable(sqlite3* DB) {
 	char* messageError;
 	sqlite3_open(DIR, &DB);
 	const char* sql = "CREATE TABLE IF NOT EXISTS BOOKS ("
+		"ID INTEGER PRIMARY KEY AUTOINCREMENT, "
 		"NAME			TEXT, "
 		"AUTHOR			TEXT, "
 		"DESCRIPTION	TEXT, "
 		"NOTES			TEXT, "
 		"READ			INT, "	
 		"PAGES			INT);";
-	//sql = "create table test (number1 int);";
 
 	try {
 		status = sqlite3_exec(DB, sql, NULL, NULL, &messageError);
@@ -67,19 +67,29 @@ int databaseObject::createTable(sqlite3* DB) {
 }
 int databaseObject::callBack(void* dbData, int colNumber, char** colFields, char** colNames) {
 	int i;
-	if (dbData != NULL) {
-		dbStruct* data = (dbStruct*)dbData;
+	dbStruct* data = (dbStruct*)dbData;
 
-		for (i = 0; i < colNumber; i++) {
-			if (strcmp(colNames[i], "PAGES") == 0) {
-				data->PAGES = atoi(colFields[i]);
-			}
-			//else if (strcmp(colNames[i], "ID") == 0) {
-				//data->ID = atoi(colFields[i]);
-			//}
-			else if (strcmp(colNames[i], "READ?") == 0) {
-				data->READ = atoi(colFields[i]);
-			}
+	for (i = 0; i < colNumber; i++) {
+		if (strcmp(colNames[i], "PAGES") == 0) {
+			data->PAGES = atoi(colFields[i]);
+		}
+		//else if (strcmp(colNames[i], "ID") == 0) {
+			//data->ID = atoi(colFields[i]);
+		//}
+		else if (strcmp(colNames[i], "READ?") == 0) {
+			data->READ = atoi(colFields[i]);
+		}
+		else if (strcmp(colNames[i], "NAME") == 0) {
+			data->NAME = colFields[i];
+		}
+		else if (strcmp(colNames[i], "AUTHOR") == 0) {
+			data->AUTHOR = colFields[i];
+		}
+		else if (strcmp(colNames[i], "NAME") == 0) {
+			data->DESCRIPTION = colFields[i];
+		}
+		else if (strcmp(colNames[i], "AUTHOR") == 0) {
+			data->NOTES = colFields[i];
 		}
 	}
 	return 0;
@@ -92,9 +102,9 @@ int databaseObject::callBackGetAll(void* dbData, int colNumber, char** colFields
 		if (strcmp(colNames[i], "PAGES") == 0) {
 			data->PAGES = atoi(colFields[i]);
 		}
-		//else if (strcmp(colNames[i], "ID") == 0) {
-			//data->ID = atoi(colFields[i]);
-		//}
+		else if (strcmp(colNames[i], "ID") == 0) {
+			data->ID = atoi(colFields[i]);
+		}
 		else if (strcmp(colNames[i], "READ") == 0) {
 			data->READ = atoi(colFields[i]);
 		}
@@ -121,7 +131,7 @@ int databaseObject::dbQuery(sqlite3* DB, std::string query, void* dbData) {
 			std::cout << "Query Successfully passed!" << std::endl;
 		}
 
-		status = sqlite3_exec(DB, query.c_str(), callBack, 0, &messageError);
+		status = sqlite3_exec(DB, query.c_str(), callBack, dbData, &messageError);
 		if (status != SQLITE_OK) {
 			std::cerr << "Query Error" << std::endl;
 			sqlite3_free(messageError);
@@ -180,13 +190,10 @@ void databaseObject::updateBook(sqlite3* DB, dbStruct data, std::string tempName
 }
 dbStruct databaseObject::getBook(sqlite3* DB, int ID, std::string bookName) {
 	dbStruct returnData;
-	std::string getQuery = "SELECT * FROM BOOKS WHERE ";
-	if (ID) { getQuery += "ID = " + ID; }
-	else if (!bookName.empty()) { getQuery += "NAME = " + bookName; }
+	std::string getQuery = "SELECT * FROM BOOKS WHERE ID = " + bookName + ";";
 
 	dbQuery(DB, getQuery, &returnData);
 	return returnData;
-
 }
 std::vector<dbStruct> databaseObject::getAllBooks(sqlite3* DB) {
 	int status = 0;

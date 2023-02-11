@@ -6,7 +6,7 @@
 #include "../dep/sqlite3.h"
 
 struct dbStruct {
-	//int ID= 0;
+	int ID = 0;
 	std::string NAME;
 	std::string AUTHOR;
 	std::string DESCRIPTION;
