@@ -66,7 +66,8 @@ void bookjournal::updateList() {
     std::vector<dbStruct> listStructs = dbObj.getAllBooks(DB);
     dbStruct tempStruct;
     int i = 0;
-    std::string bookImg;
+    std::string bookDir;
+    QIcon bookImg;
 
     std::string listText = "";
     for (i; i < listStructs.size(); i++) {
@@ -75,10 +76,11 @@ void bookjournal::updateList() {
         listText += "    |||    " + tempStruct.AUTHOR;
         listText += "    |||    " + std::to_string(tempStruct.PAGES);
         listText += " Pages";
-        if (int(tempStruct.READ)) { bookImg = ":/rsc/img/icon/open-book.png"; }
-        else { bookImg = ":/rsc/img/icon/book.png"; }
-        QListWidgetItem* widgetItem = new QListWidgetItem(QIcon(bookImg.c_str()), QString::fromStdString(listText));
-        widgetItem->setFont(QFont("Ink Free", 18));
+        if (int(tempStruct.READ)) { bookDir = ":/rsc/img/icons/open-book.png"; }
+        else { bookDir = ":/rsc/img/icons/book.png"; }
+        bookImg = QIcon(bookDir.c_str());
+        QListWidgetItem* widgetItem = new QListWidgetItem(QIcon(bookImg), QString::fromStdString(listText));
+        widgetItem->setFont(QFont("Ink Free", 20));
         ui.listWidget->addItem(widgetItem);
     }
 }
@@ -88,8 +90,8 @@ void bookjournal::updateList() {
 * Main Menu Operations
 ******************************/
 void bookjournal::on_listWidget_doubleClicked() {
-    std::vector<dbStruct> bookData;
-    dbStruct bookDataEntry = bookData[0];
+    dbStruct bookDataEntry;
+    dbObj.getBook(DB, NULL, ui.listWidget->currentItem()->text().toStdString());
     tempName = bookDataEntry.NAME;
 
     ui.lineEditName->setText(QString(bookDataEntry.NAME.c_str()));
