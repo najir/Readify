@@ -22,6 +22,7 @@ bookjournal::bookjournal(QWidget *parent)
     setVisual();
     ui.widgetMain->setVisible(1);
     ui.widgetPage->setVisible(0);
+    ui.widgetEdit->setVisible(0);
     updateList();
     setDefaults();
     QMessageBox::about(this, "Welcome", welcomeMessage.c_str());
@@ -52,7 +53,7 @@ void bookjournal::setVisual() {
     //Main Background
     QPixmap back;
     back.load(":/rsc/img/bcg/tempBack.png");
-    back = back.scaled(this->size()*1.1, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    back = back.scaled(this->size()*1.3, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     QPalette bgPal;
     bgPal.setBrush(QPalette::Window, back);
     this->setPalette(bgPal);
@@ -101,16 +102,15 @@ void bookjournal::on_listWidget_doubleClicked() {
         }
     }
     bookDataEntry = dbObj.getBook(DB, NULL, findQuery);
-    tempName = bookDataEntry.NAME;
 
-    ui.lineEditName->setText(QString(bookDataEntry.NAME.c_str()));
-    ui.lineEditAuthor->setText(QString(bookDataEntry.AUTHOR.c_str()));
-    ui.textEditDesc->setText(QString(bookDataEntry.DESCRIPTION.c_str()));
-    ui.textEditNotes->setText(QString(bookDataEntry.NOTES.c_str()));
-    ui.checkBox->setChecked(bookDataEntry.READ);
-    ui.spinBoxRead->setValue(bookDataEntry.PAGES);
+    ui.lineEditName_2->setText(QString(bookDataEntry.NAME.c_str()));
+    ui.lineEditAuthor_2->setText(QString(bookDataEntry.AUTHOR.c_str()));
+    ui.textEditDesc_2->setText(QString(bookDataEntry.DESCRIPTION.c_str()));
+    ui.textEditNotes_2->setText(QString(bookDataEntry.NOTES.c_str()));
+    ui.checkBox_3->setChecked(bookDataEntry.READ);
+    ui.spinBoxRead_3->setValue(bookDataEntry.PAGES);
     ui.widgetMain->hide();
-    ui.widgetPage->show();
+    ui.widgetEdit->show();
 }
 void bookjournal::on_pushButtonNew_clicked() {
     //Hide main menu, show new menu
@@ -128,6 +128,13 @@ void bookjournal::on_pushButtonCancel_clicked() {
     setDefaults();
     
 }
+void bookjournal::on_pushButtonCancel_2_clicked() {
+    //Hide new menu, show main menu, reset data to default
+    ui.widgetMain->setVisible(1);
+    ui.widgetEdit->setVisible(0);
+    setDefaults();
+
+}
 void bookjournal::on_pushButtonSave_clicked() {
     //push db call, hide new menu, show main menu + update list
     dbStruct saveValues;
@@ -138,34 +145,59 @@ void bookjournal::on_pushButtonSave_clicked() {
     saveValues.READ = ui.checkBox->isChecked();
     saveValues.PAGES = ui.spinBoxRead->value();
     
-    dbObj.insertBook(DB, saveValues);
-    updateList();
-    ui.widgetMain->setVisible(1);
-    ui.widgetPage->setVisible(0);
-    setDefaults();
+    if (saveValues.NAME == "" || saveValues.AUTHOR == "") {
+        QMessageBox::warning(this, "Insert Error", "Please make sure all the fields are entered correctly");
+    }
+    else {
+        dbObj.insertBook(DB, saveValues);
+        updateList();
+        ui.widgetMain->setVisible(1);
+        ui.widgetPage->setVisible(0);
+        setDefaults();
+    }
 }
 void bookjournal::on_pushButtonUpdate_clicked() {
     //push db call, hide new menu, show main menu + update list
     dbStruct saveValues;
-    saveValues.NAME = ui.lineEditName->text().toStdString();
-    saveValues.AUTHOR = ui.lineEditAuthor->text().toStdString();
-    saveValues.DESCRIPTION = ui.textEditDesc->toPlainText().toStdString();
-    saveValues.NOTES = ui.textEditNotes->toPlainText().toStdString();
-    saveValues.READ = ui.checkBox->isChecked();
-    saveValues.PAGES = ui.spinBoxRead->value();
+    saveValues.NAME = ui.lineEditName_2->text().toStdString();
+    saveValues.AUTHOR = ui.lineEditAuthor_2->text().toStdString();
+    saveValues.DESCRIPTION = ui.textEditDesc_2->toPlainText().toStdString();
+    saveValues.NOTES = ui.textEditNotes_2->toPlainText().toStdString();
+    saveValues.READ = ui.checkBox_3->isChecked();
+    saveValues.PAGES = ui.spinBoxRead_3->value();
+    std::string bookText = ui.listWidget->currentItem()->text().toStdString();
+    std::string findQuery;
+    int i;
 
-    dbObj.updateBook(DB, saveValues, tempName);
+    for (i = 0; i < bookText.size(); i++) {
+        if (bookText[i] == '.') {
+            findQuery = bookText.substr(0, i);
+            i = bookText.size();
+        }
+    }
+
+    dbObj.updateBook(DB, saveValues, findQuery);
     updateList();
     ui.widgetMain->setVisible(1);
-    ui.widgetPage->setVisible(0);
+    ui.widgetEdit->setVisible(0);
     setDefaults();
 }
 void bookjournal::on_pushButtonDelete_clicked() {
     //push db call, hide new menu, show main menu + update list
-    dbObj.deleteBook(DB, NULL, ui.lineEditName->text().toStdString());
+    std::string bookText = ui.listWidget->currentItem()->text().toStdString();
+    std::string findQuery;
+    int i;
+
+    for (i = 0; i < bookText.size(); i++) {
+        if (bookText[i] == '.') {
+            findQuery = bookText.substr(0, i);
+            i = bookText.size();
+        }
+    }
+    dbObj.deleteBook(DB, NULL, findQuery);
     updateList();
 
     ui.widgetMain->setVisible(1);
-    ui.widgetPage->setVisible(0);
+    ui.widgetEdit->setVisible(0);
     setDefaults();
 }

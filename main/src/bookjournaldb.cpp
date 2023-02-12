@@ -41,7 +41,7 @@ int databaseObject::createTable(sqlite3* DB) {
 	sqlite3_open(DIR, &DB);
 	const char* sql = "CREATE TABLE IF NOT EXISTS BOOKS ("
 		"ID INTEGER PRIMARY KEY AUTOINCREMENT, "
-		"NAME			TEXT, "
+		"NAME			TEXT	UNIQUE, "
 		"AUTHOR			TEXT, "
 		"DESCRIPTION	TEXT, "
 		"NOTES			TEXT, "
@@ -76,7 +76,7 @@ int databaseObject::callBack(void* dbData, int colNumber, char** colFields, char
 		//else if (strcmp(colNames[i], "ID") == 0) {
 			//data->ID = atoi(colFields[i]);
 		//}
-		else if (strcmp(colNames[i], "READ?") == 0) {
+		else if (strcmp(colNames[i], "READ") == 0) {
 			data->READ = atoi(colFields[i]);
 		}
 		else if (strcmp(colNames[i], "NAME") == 0) {
@@ -110,6 +110,12 @@ int databaseObject::callBackGetAll(void* dbData, int colNumber, char** colFields
 		}
 		else if (strcmp(colNames[i], "NAME") == 0) {
 			data->NAME = colFields[i];
+		}
+		else if (strcmp(colNames[i], "DESCRIPTION") == 0) {
+			data->DESCRIPTION = colFields[i];
+		}
+		else if (strcmp(colNames[i], "NOTES") == 0) {
+			data->NOTES = colFields[i];
 		}
 		else if (strcmp(colNames[i], "AUTHOR") == 0) {
 			data->AUTHOR = colFields[i];
@@ -153,7 +159,7 @@ int databaseObject::dbQuery(sqlite3* DB, std::string query, void* dbData) {
 * Abstraction Layer that processes query info and manages returned data if needed.
 ******************************/
 void databaseObject::insertBook(sqlite3* DB, dbStruct data) {
-	std::string insertQuery = "INSERT INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, READ, PAGES) VALUES(";
+	std::string insertQuery = "INSERT OR IGNORE INTO BOOKS(NAME, AUTHOR, DESCRIPTION, NOTES, READ, PAGES) VALUES(";
 	insertQuery += "'" + data.NAME + "', ";
 	insertQuery += "'" + data.AUTHOR + "', ";
 	insertQuery += "'" + data.DESCRIPTION + "', ";
@@ -164,26 +170,20 @@ void databaseObject::insertBook(sqlite3* DB, dbStruct data) {
 	dbQuery(DB, insertQuery, NULL);
 }
 void databaseObject::deleteBook(sqlite3* DB, int ID, std::string bookName) {
-	std::string deleteQuery = "DELETE FROM BOOKS WHERE ";
-	if (ID) { deleteQuery += "ID = " + ID; }
-	else if (!bookName.empty()) { deleteQuery += "NAME = bookName" + ID; }
+	std::string deleteQuery = "DELETE FROM BOOKS WHERE ID = " + bookName + ";";
 
 	dbQuery(DB, deleteQuery, NULL);
 }
 void databaseObject::updateBook(sqlite3* DB, dbStruct data, std::string tempName) {
-	int idValue = 0;
-	std::string updateSearch = "";
 
-	//Need to get id of bookname location then use that value for WHERE
-	dbQuery(DB, updateSearch, NULL);
-
-	std::string updateQuery = "UPDATE BOOKS SET(NAME, AUTHOR, DESCRIPTION, NOTES, READ?, PAGES) WHERE(";
-	updateQuery += "NAME = " + data.NAME;
-	updateQuery += "AUTHOR = " + data.AUTHOR;
-	updateQuery += "NOTES = " + data.NOTES;
-	updateQuery += "READ? = " + data.READ;
-	updateQuery += "PAGES = " + data.PAGES;
-	updateQuery += ") WHERE ID = " + idValue;
+	std::string updateQuery = "UPDATE BOOKS SET ";
+	updateQuery += "NAME = '"			+ data.NAME;
+	updateQuery += "', AUTHOR = '"		+ data.AUTHOR;
+	updateQuery += "', DESCRIPTION = '" + data.DESCRIPTION;
+	updateQuery += "', NOTES = '"		+ data.NOTES;
+	updateQuery += "', READ = "			+ std::to_string(data.READ);
+	updateQuery += ", PAGES = "			+ std::to_string(data.PAGES);
+	updateQuery += " WHERE ID = " + tempName + ";";
 
 	dbQuery(DB, updateQuery, NULL);
 

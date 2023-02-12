@@ -28,4 +28,5 @@ private slots:
     void on_pushButtonSave_clicked();
     void on_pushButtonUpdate_clicked();
     void on_pushButtonDelete_clicked();
+    void on_pushButtonCancel_2_clicked();
 };
